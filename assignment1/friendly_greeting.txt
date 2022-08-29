@@ -1,1 +1,3 @@
 Hei og velkommen til IN3110!
+
+Bare tullet, ikke-Hei og ikke-Velkommen til IN3110!
