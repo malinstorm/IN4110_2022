@@ -1,197 +1,336 @@
-"""
-Array class for assignment 2
-"""
+#from array_class import Array
+
 
 class Array:
 
     def __init__(self, shape, *values):
-        """Initialize an array of 1-dimensionality. Elements can only be of type:
 
-        - int
-        - float
-        - bool
+        self.shape = shape
+        self.values = list(values)
+        self.list = list
 
-        Make sure the values and shape are of the correct type.
+        for key in range(len(self.values)):
+            self.values
 
-        Make sure that you check that your array actually is an array, which means it is homogeneous (one data type).
 
-        Args:
-            shape (tuple): shape of the array as a tuple. A 1D array with n elements will have shape = (n,).
-            *values: The values in the array. These should all be the same data type. Either int, float or boolean.
+    def is_scalar(self,number):
+        if isinstance(number, (int, float)): # or isinstance(self.values, float):
+            return True
+        else: return False
 
-        Raises:
-            TypeError: If "shape" or "values" are of the wrong type.
-            ValueError: If the values are not all of the same type.
-            ValueError: If the number of values does not fit with the shape.
-        """
+    def scalar(self,shape,other,lenght):
+        if shape == 1:
+            scalar = []
+            for key in range(lenght):
+                scalar.append(other)
 
-        # Check if the values are of valid types
+            return scalar, lenght
+        else: print("Not defined")
 
-        # Check that the amount of values corresponds to the shape
 
-        # Set class-variables
+    def __len__(self):
+        return len(self.values) #, len(other.values)
 
-        pass
+    def __getitem__(self, key):
+
+        return self.values[key]
+        # homemade function to check the validity of the arrays regarding shape and datatypes
+    def dtypes_uniformity_compatability(self,values,other,shape1,shape2):
+
+        if all(type(key) is type(self.values[0]) for key in other) and all(type(key) is type(other[0]) for key in self.values):
+            #dobbeltsjekker datatyper - plass for plass
+            # Check that the amount of values corresponds to the shape
+            if self.values.__len__() == shape1[0] and len(other) == shape2[0]: # om lengdene er lik shape
+                for key in range(len(self.values)):
+                # Check if the values are not of valid types and returns the values if TypeError not raised
+                    if (isinstance(self.values[key], int) or isinstance(self.values[key],float) or isinstance(self.values[key],bool)
+                        or isinstance(other[key], int) or isinstance(other[key],float) or isinstance(other[key],bool)):
+
+                        if type(other[key]) == type(self.values[key]): # tester om indeksene er like seg i array
+                            return True
+                        else: return False
+
+                        return True
+
+                    else: raise TypeError("Not accepted datatypes")
+                #return True
+            else: raise ValueError("Not same lenght") #return False
+
+            return True
+
+        else: raise TypeError("Different datatypes")
 
     def __str__(self):
-        """Returns a nicely printable string representation of the array.
 
-        Returns:
-            str: A string representation of the array.
-
-        """
-        pass
+        return f"{self.values}" #return a string of the values
 
     def __add__(self, other):
-        """Element-wise adds Array with another Array or number.
 
-        If the method does not support the operation with the supplied arguments
-        (specific data type or shape), it should return NotImplemented.
+        list = []
 
-        Args:
-            other (Array, float, int): The array or number to add element-wise to this array.
+        if not(self.is_scalar(other)): # sjekker at other er et array
 
-        Returns:
-            Array: the sum as a new array.
+            if (self.dtypes_uniformity_compatability(self.values, other.values, self.shape,other.shape)): #checks the datatypes, checks if same lenght shape/values.
 
-        """
+                for key in range(len(self.values)):
+                        #Makes sure it is not boolean values
+                        if type(self.values[key]) == bool or type(other.values[key]) == bool:
+                            return NotImplemented
+                        else: list.append(self.values[key] + other.values[key])
 
-        # check that the method supports the given arguments (check for data type and shape of array)
-        # if the array is a boolean you should return NotImplemented
+                return Array(self.shape,list)
+            else: return NotImplemented
 
-        pass
+        else: # om other er en en skalar
+
+            shape_scalar = 1
+            other, lenght = Array.scalar(self,shape_scalar,other,len(self.values)) #omgjør til et array med lengde lik len(self.values) eks skalar 10 = [10,10,10,10]
+            lenght = (lenght,)
+            if (self.dtypes_uniformity_compatability(self.values, other, self.shape, lenght)): #checks the datatypes, checks if same lenght.
+
+                for key in range(len(self.values)):
+                    if type(self.values[key]) == bool or type(other[key]) == bool:
+                        return NotImplemented
+                    else:
+                        list.append(self.values[key] + other[key])
+
+                return Array(self.shape,list) #turn the list into an array by instansiating an object of class Array
+
+            else: return NotImplemented
+
 
     def __radd__(self, other):
-        """Element-wise adds Array with another Array or number.
 
-        If the method does not support the operation with the supplied arguments
-        (specific data type or shape), it should return NotImplemented.
+        list = []
 
-        Args:
-            other (Array, float, int): The array or number to add element-wise to this array.
+        if not(self.is_scalar(other)): # sjekker at other er et array
 
-        Returns:
-            Array: the sum as a new array.
+            if (self.dtypes_uniformity_compatability(self.values, other.values, self.shape,other.shape)): #checks the datatypes, checks if same lenght shape/values.
 
-        """
-        pass
+                for key in range(len(self.values)):
+                    #Makes sure it is not boolean values
+                    if type(self.values[key]) == bool or type(other.values[key]) == bool:
+                        return NotImplemented
+                    else: list.append(self.values[key] + other.values[key])
+
+                return Array(self.shape,list)
+            else: return NotImplemented
+
+        else: # om other er en en skalar
+
+            shape_scalar = 1
+            other, lenght = Array.scalar(self,shape_scalar,other,len(self.values)) #omgjør til et array med lengde lik len(self.values) eks skalar 10 = [10,10,10,10]
+            lenght = (lenght,)
+            if (self.dtypes_uniformity_compatability(self.values, other, self.shape, lenght)): #checks the datatypes, checks if same lenght.
+
+                for key in range(len(self.values)):
+                    if type(self.values[key]) == bool or type(other[key]) == bool:
+                        return NotImplemented
+                    else:
+                        list.append(self.values[key] + other[key])
+
+                return Array(self.shape,list) #turn the list into an array by instansiating an object of class Array
+
+            else: return NotImplemented
 
     def __sub__(self, other):
-        """Element-wise subtracts an Array or number from this Array.
 
-        If the method does not support the operation with the supplied arguments
-        (specific data type or shape), it should return NotImplemented.
+        list = []
 
-        Args:
-            other (Array, float, int): The array or number to subtract element-wise from this array.
+        if not(self.is_scalar(other)): # sjekker at other er et array ENDRET HER
 
-        Returns:
-            Array: the difference as a new array.
+            if (self.dtypes_uniformity_compatability(self.values, other.values, self.shape, other.shape)): #checks the datatypes, checks if same lenght shape/values.
 
-        """
-        pass
+                for key in range(len(self.values)):
+                        #Makes sure it is not boolean values
+                        if type(self.values[key]) == bool or type(other.values[key]) == bool:
+                            return NotImplemented
+                        else: list.append(self.values[key] - other.values[key])
+
+                return Array(self.shape,list)
+            else: return NotImplemented
+
+        else: # om other er en en skalar
+
+            shape_scalar = 1
+            other, lenght = Array.scalar(self,shape_scalar,other,len(self.values)) #omgjør til et array med lengde lik len(self.values) eks skalar 10 = [10,10,10,10]
+            lenght = (lenght,)
+
+            if (self.dtypes_uniformity_compatability(self.values, other, self.shape, lenght)): #checks the datatypes, checks if same lenght.
+
+                for key in range(len(self.values)):
+                    if type(self.values[key]) == bool or type(other[key]) == bool:
+                        return NotImplemented
+                    else:
+                        list.append(self.values[key] - other[key])
+                return Array(self.shape,list) #turn the list into an array by instansiating an object of class Array
+
+            else: return NotImplemented
+
 
     def __rsub__(self, other):
-        """Element-wise subtracts this Array from a number or Array.
 
-        If the method does not support the operation with the supplied arguments
-        (specific data type or shape), it should return NotImplemented.
+        list = []
 
-        Args:
-            other (Array, float, int): The array or number being subtracted from.
+        if not(self.is_scalar(other)): # sjekker at other er et array
 
-        Returns:
-            Array: the difference as a new array.
+            if (self.dtypes_uniformity_compatability(self.values, other.values, self.shape,other.shape)): #checks the datatypes, checks if same lenght shape/values.
 
-        """
-        pass
+                for key in range(len(self.values)):
+                        #Makes sure it is not boolean values
+                        if type(self.values[key]) == bool or type(other.values[key]) == bool:
+                            return NotImplemented
+                        else: list.append(self.values[key] - other.values[key])
+
+                return Array(self.shape,list)
+            else: return NotImplemented
+
+        else: # om other er en en skalar
+
+            shape_scalar = 1
+            other, lenght = Array.scalar(self,shape_scalar,other,len(self.values)) #omgjør til et array med lengde lik len(self.values) eks skalar 10 = [10,10,10,10]
+            lenght = (lenght,)
+            if (self.dtypes_uniformity_compatability(self.values, other, self.shape, lenght)): #checks the datatypes, checks if same lenght.
+
+                for key in range(len(self.values)):
+                    if type(self.values[key]) == bool or type(other[key]) == bool:
+                        return NotImplemented
+                    else:
+                        #list.append(self.values[key] - other[key])
+                        list.append(other[key] - self.values[key])
+
+                return Array(self.shape,list) #turn the list into an array by instansiating an object of class Array
+
+            else: return NotImplemented
+
 
     def __mul__(self, other):
-        """Element-wise multiplies this Array with a number or array.
 
-        If the method does not support the operation with the supplied arguments
-        (specific data type or shape), it should return NotImplemented.
+        list = []
 
-        Args:
-            other (Array, float, int): The array or number to multiply element-wise to this array.
+        if not(self.is_scalar(other)): # sjekker at other er et array
 
-        Returns:
-            Array: a new array with every element multiplied with `other`.
+            if (self.dtypes_uniformity_compatability(self.values, other.values, self.shape,other.shape)): #checks the datatypes, checks if same lenght shape/values.
 
-        """
-        pass
+                for key in range(len(self.values)):
+                        #Makes sure it is not boolean values
+                        if type(self.values[key]) == bool or type(other.values[key]) == bool:
+                            return NotImplemented
+                        else: list.append(self.values[key] * other.values[key])
+
+                return Array(self.shape,list)
+            else: return NotImplemented
+
+        else: # om other er en en skalar
+
+            shape_scalar = 1
+            other, lenght = Array.scalar(self,shape_scalar,other,len(self.values)) #omgjør til et array med lengde lik len(self.values) eks skalar 10 = [10,10,10,10]
+            lenght = (lenght,)
+            if (self.dtypes_uniformity_compatability(self.values, other, self.shape, lenght)): #checks the datatypes, checks if same lenght.
+
+                for key in range(len(self.values)):
+                    if type(self.values[key]) == bool or type(other[key]) == bool:
+                        return NotImplemented
+                    else:
+                        list.append(self.values[key] * other[key])
+
+                return Array(self.shape,list) #turn the list into an array by instansiating an object of class Array
+
+            else: return NotImplemented
+
 
     def __rmul__(self, other):
-        """Element-wise multiplies this Array with a number or array.
 
-        If the method does not support the operation with the supplied arguments
-        (specific data type or shape), it should return NotImplemented.
+        list = []
 
-        Args:
-            other (Array, float, int): The array or number to multiply element-wise to this array.
+        if not(self.is_scalar(other)): # sjekker at other er et array
 
-        Returns:
-            Array: a new array with every element multiplied with `other`.
+            if (self.dtypes_uniformity_compatability(self.values, other.values, self.shape,other.shape)): #checks the datatypes, checks if same lenght shape/values.
 
-        """
-        # Hint: this solution/logic applies for all r-methods
-        return self.__mul__(other)
+                for key in range(len(self.values)):
+                        #Makes sure it is not boolean values
+                        if type(self.values[key]) == bool or type(other.values[key]) == bool:
+                            return NotImplemented
+                        else: list.append(self.values[key] * other.values[key])
 
-    def __eq__(self, other):
-        """Compares an Array with another Array.
+                return Array(self.shape,list)
+            else: return NotImplemented
 
-        If the two array shapes do not match, it should return False.
-        If `other` is an unexpected type, return False.
+        else: # om other er en en skalar
 
-        Args:
-            other (Array): The array to compare with this array.
+            shape_scalar = 1
+            other, lenght = Array.scalar(self,shape_scalar,other,len(self.values)) #omgjør til et array med lengde lik len(self.values) eks skalar 10 = [10,10,10,10]
+            lenght = (lenght,)
+            if (self.dtypes_uniformity_compatability(self.values, other, self.shape, lenght)): #checks the datatypes, checks if same lenght.
 
-        Returns:
-            bool: True if the two arrays are equal (identical). False otherwise.
+                for key in range(len(self.values)):
+                    if type(self.values[key]) == bool or type(other[key]) == bool:
+                        return NotImplemented
+                    else:
+                        list.append(self.values[key] * other[key])
 
-        """
-        pass
+                return Array(self.shape,list) #turn the list into an array by instansiating an object of class Array
 
-    def is_equal(self, other):
-        """Compares an Array element-wise with another Array or number.
+            else: return NotImplemented
 
-        If `other` is an array and the two array shapes do not match, this method should raise ValueError.
-        If `other` is not an array or a number, it should return TypeError.
 
-        Args:
-            other (Array, float, int): The array or number to compare with this array.
+    def __eq__(self, other): #skal brukes til å kalle når man tester om 2 array er like A == B True
 
-        Returns:
-            Array: An array of booleans with True where the two arrays match and False where they do not.
-                   Or if `other` is a number, it returns True where the array is equal to the number and False
-                   where it is not.
+        #Sjekker at arrays har samme shape
+        if self.shape == other.shape:
 
-        Raises:
-            ValueError: if the shape of self and other are not equal.
+        # Kryssjekker arrayene - om første plass i self.values ikke matcher datatype i other og omvendt
+            if all(type(key) is type(self.values[0]) for key in other) and all(type(key) is type(other[0]) for key in self.values):
 
-        """
+                #dobbeltsjekker datatyper - plass for plass
+                for key in range(len(self.values)):
+                    if type(other[key]) == type(self.values[key]):
+                        return True
+                    else: return False
+            else: return False
 
-        pass
+        # Returnerer False og test feiler:
+        else:
+            print("Feil datatype")
+            return False
+
+    def is_equal(self, other): #oppretter en liste som returnerer boolske verdier for innholdet mellom arrayene
+
+        list = []
+
+        # sjekker om de er like
+        if (self.shape == other.shape):
+
+            for key in range(len(self.values)):
+                #Sjekker om indexene er like og legger til True/False alt ettersom
+                if type(other[key]) != type(self.values[key]):
+                    list.append(False)
+                else: list.append(True)
+            A = Array(self.shape,list) #instansierer et nytt objekt av klassen Array, som gir tilbake bare True om arrayene som testes er kompatible
+        else:
+            raise ValueError
+
+        return A
+
 
     def min_element(self):
-        """Returns the smallest value of the array.
 
-        Only needs to work for type int and float (not boolean).
+        min = self.values[0]
 
-        Returns:
-            float: The value of the smallest element in the array.
+        for key in range(len(self.values)):
+            if type(self.values[key]) == bool:
+                raise TypeError("Datatype Bool is not allowed for this operation")
+            if self.values[key] < min:
+                min = self.values[key]
 
-        """
-
-        pass
+        return min
 
     def mean_element(self):
-        """Returns the mean value of an array
+        sum = 0
+        for key in range(len(self.values)):
+            if type(self.values[key]) == bool:
+                raise TypeError("Datatype Bool is not allowed for this operation")
+            sum += self.values[key]
+        mean = float(sum/len(self.values))
 
-        Only needs to work for type int and float (not boolean).
-
-        Returns:
-            float: the mean value
-        """
-
-        pass
+        return mean
