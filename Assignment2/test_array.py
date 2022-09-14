@@ -2,8 +2,8 @@
 Tests for our array class
 """
 #import pytest
-#from array_class import Array
-from implementation_testing import Array
+from array_class import Array
+#from implementation_testing import Array
 import math
 # 1D tests (Task 4)
 
