@@ -27,7 +27,7 @@ Add file e.g test/rain.jpg, conditional
 
 For filtered image: test/rain.jpg -i python/numba/numpy/cython -se sepia/-g gray
 
-For saving: -s save - saves file in package directory 
+For saving: -s save - saves file in package directory test/ as filtered.jpg
 
 For resizing: -re resize (used for time consuming resolutions)
 
