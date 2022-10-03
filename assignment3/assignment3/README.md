@@ -1,4 +1,4 @@
-Install after downloading:  Navigate to folder and install running pip install .
+Install after downloading:  Navigate to folder in CMD and install running pip install .
 pip install -e . will make the package editable
 
 Description: Package that applies filtering to a picture of choice, color2gray OR color2sepia
