@@ -21,7 +21,7 @@ def run_filter(
     #Run the selected filter
     # load the image from a file
     image = read_image(file) #array
-    print(np.shape(image))
+    
     if scale != 1:
         # Resize image, if needed
         resized = np.resize(image, (image.shape[0] // 2, image.shape[1] // 2,3))
