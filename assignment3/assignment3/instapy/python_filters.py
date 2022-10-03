@@ -23,18 +23,19 @@ def python_color2gray(image: np.array) -> np.array:
 
 
 def python_color2sepia(image: np.array) -> np.array:
-
+     # defining the sepia-matrix
     sepia_matrix = np.array([[0.393,0.769,0.189],[0.349,0.686,0.168],[0.272,0.534,0.131]])
-    sepia = np.empty_like(image)
+    sepia = np.empty_like(image) # creating empty array, same size as image
     max = 255
-    width,height = len(image[0]),len(image)
-
+    width,height = len(image[0]),len(image) # getitng shapes
+     # iterating the pixels
     for i in range(height):
         for j in range(width):
             red = image[i,j,0] * sepia_matrix[0][0] + image[i,j,1] * sepia_matrix[0][1] + image[i,j,2] * sepia_matrix[0][2]
             green = image[i,j,0] * sepia_matrix[1][0] + image[i,j,1] * sepia_matrix[1][1] + image[i,j,2] * sepia_matrix[1][2]
             blue = image[i,j,0] * sepia_matrix[2][0] + image[i,j,1] * sepia_matrix[2][1] + image[i,j,2] * sepia_matrix[2][2]
-
+     
+     # checking that values don't override 255
             if red > max:
                 sepia[i,j,0] = max
             else:
