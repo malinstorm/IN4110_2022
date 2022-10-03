@@ -40,7 +40,7 @@ def test_color2sepia(image):
     # verify some individual pixel samples F EKS IKKE STØRRE ENN 255
     # according to the sepia matrix
 
-filename = "rain.jpg"
+filename = "test/rain.jpg"
 pixels = read_image(filename)
 test_color2gray(pixels)
 test_color2sepia(pixels)

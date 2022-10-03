@@ -40,7 +40,7 @@ def test_color2sepia(image, reference_sepia):
     nt.assert_allclose(test,reference_sepia)
     np.allclose(test,reference_sepia)
 
-filename = "rain.jpg"
+filename = "test/rain.jpg"
 pixels = read_image(filename)
 ref_filter = get_filter("color2gray","python")
 test_color2gray(pixels, ref_filter(pixels))
