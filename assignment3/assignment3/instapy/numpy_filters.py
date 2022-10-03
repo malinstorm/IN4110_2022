@@ -4,10 +4,11 @@ from typing import Optional
 import numpy as np
 
 def numpy_color2gray(image: np.array) -> np.array:
-
+    # defining array same size as image
     gray_image = np.empty_like(image)
 
     r, g, b = 0.21, 0.72, 0.07 # weighting for RGB
+    # slicing the array
     gray_image[:,:,0] =  gray_image[:,:,1] = gray_image[:,:,2] = r * image[:,:,0] + g * image[:,:,1] +  b * image[:,:,2]
 
     return gray_image.astype("uint8")
@@ -23,7 +24,8 @@ def numpy_color2sepia(image: np.array, k: Optional[float] = 1) -> np.array:
     if not 0 <= k <= 1:
         # validate k (optional)
         raise ValueError(f"k must be between [0-1], got {k=}")
-
+    
+    # defining sepia matrix
     sepia_matrix = np.array([[0.393,0.769,0.189],[0.349,0.686,0.168],[0.272,0.534,0.131]])
     sepia_image = np.empty_like(image)
     max = 255
