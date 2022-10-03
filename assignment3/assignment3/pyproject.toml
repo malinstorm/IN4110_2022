@@ -14,8 +14,8 @@ license = {text = "MIT License"}
 name = "instapy"
 description = "filter pictures"
 readme = "README.md"
-dependencies = ["importlib-metadata","numpy","numba","pillow","matplotlib","cython","line_profiler"]
+dependencies = ["importlib-metadata","numpy","numba","pillow","matplotlib","cython","line_profiler"] 
 
 
 [project.scripts]
-instapy = "instapy.cli:main" #instapy
+instapy = "instapy.cli:main" # to be able to call instapy with CLI
