@@ -3,7 +3,9 @@ Install after downloading:  Navigate to folder in CMD and install running pip in
 pip install -e . will make the package editable
 
 Description: Package that applies filtering to a picture of choice, color2gray OR color2sepia
+
 Dependencies: importlib-metadata, numpy, numba, pillow, matplotlib, cython, line_profiler
+
 Versions: platform win32 -- Python 3.8.0, pytest-7.1.3, numpy == 1.21.5, numba 0.56.2, Cython version 0.29.32, pillow (9.2.0), importlib-1.0.4, matplotlib  (1.16.0), line_profiler (3.5.1)
 
 versions can be installed from CMD --> python pip install numpy/
