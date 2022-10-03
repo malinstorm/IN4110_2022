@@ -7,7 +7,6 @@ For Task 6.
 """
 import time
 import instapy
-#from . import io
 from instapy.io import *
 from typing import Callable
 import numpy as np
