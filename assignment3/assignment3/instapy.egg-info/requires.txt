@@ -1,0 +1,7 @@
+importlib-metadata
+numpy
+numba
+pillow
+matplotlib
+cython
+line_profiler
