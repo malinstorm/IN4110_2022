@@ -56,6 +56,7 @@ def main(argv=None):
     parser.add_argument("-i", "--implementation", help={"python","numba","numpy","cython"})
     parser.add_argument("-s","--save", help="Save to file")
     parser.add_argument("-re","--resize", help="Resize image if too large resolution")
+    
     # Add required arguments
     args = parser.parse_args()
 
@@ -68,7 +69,9 @@ def main(argv=None):
         print("For saving: -s save")
         print("For resizing: -re resize")
         print("For timing: python(version) -m instapy.timing")
+        
         # parse arguments and call run_filter
+    # checking for implementation, filter_type, save and resize
     if args.sepia and args.implementation:
         filter = "color2sepia"
         if args.resize:
@@ -78,7 +81,8 @@ def main(argv=None):
             save = "Yes"
         else: save = ""
         run_filter(args.file,save,args.implementation,filter,scale)
-
+    
+    # checking for implementation, filter_type, save and resize
     if args.gray and args.implementation:
         filter = "color2gray"
         if args.resize:
