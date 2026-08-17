@@ -127,3 +127,16 @@ def find_img_src(html: str):
         if match:
             src_set.add(match.group(1))
     return src_set
+
+
+
+url = "https://no.wikipedia.org/wiki/Rugby_union"
+output = "test.txt"
+
+html = get_html(url,None,None)
+#print(gh)
+base_url= "https://en.wikipedia.org"
+#fu = find_urls(html,base_url,output)
+#print(fu)
+fa = find_articles(html)
+print(fa)

@@ -20,7 +20,7 @@ from strompris import (
     plot_prices,
 )
 
-#kaller FastAPI og tilordner til app
+#calls FastAPI and set it to app
 app = FastAPI()
 #definerer directory for bruk med jinja template
 templates = Jinja2Templates(directory="templates")
