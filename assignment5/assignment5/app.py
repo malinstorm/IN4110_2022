@@ -115,7 +115,7 @@ async def plot_activity(location: str = "NO1", activity: str ="shower", minutes:
 ### documentation Sphinx ###
 #defining the path to _build/html - where we want to run the html-files from. It has to end in _build/html
 #path to docs/ will depend on the where directory is placed
-directory = os.path.abspath('C:/IN4110/IN3110-malina/assignment5/assignment5/docs/_build/html/')
+directory = os.path.abspath('C:/IN4110/assignment5/assignment5/docs/_build/html/')
 #Makes sure html is run
 html = True
 #mounting the static files independently to, fastAPI app,
