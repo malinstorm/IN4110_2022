@@ -1,1 +1,3 @@
 
+Fast API
+hvakosterstrommen.no
