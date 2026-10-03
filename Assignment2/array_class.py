@@ -1,336 +1,290 @@
-#from array_class import Array
-
-
 class Array:
+    """
+    Homemade array class with simple numpy-like operations.
+    Supports 1D and 2D arrays with int, float and bool values.
+    """
 
     def __init__(self, shape, *values):
 
+        # gjør om shape til tuple hvis bare et tall blir sendt inn
+        if isinstance(shape, int):
+            shape = (shape,)
+
+        if not isinstance(shape, tuple) or len(shape) == 0:
+            raise TypeError("Shape must be an int or tuple")
+
+        for dim in shape:
+            if not isinstance(dim, int) or dim <= 0:
+                raise ValueError("Shape must contain positive integers")
+
         self.shape = shape
-        self.values = list(values)
-        self.list = list
 
-        for key in range(len(self.values)):
-            self.values
+        # flater ut verdiene slik at både
+        # Array((4,), 1,2,3,4) og Array((4,), [1,2,3,4]) fungerer
+        self.values = self._flatten(values)
+
+        expected_length = 1
+
+        for dim in self.shape:
+            expected_length *= dim
+
+        if len(self.values) != expected_length:
+            raise ValueError(
+                f"Shape {self.shape} needs {expected_length} values, "
+                f"got {len(self.values)}"
+            )
+
+        for value in self.values:
+            if not isinstance(value, (int, float, bool)):
+                raise TypeError("Only int, float and bool are accepted")
 
 
-    def is_scalar(self,number):
-        if isinstance(number, (int, float)): # or isinstance(self.values, float):
-            return True
-        else: return False
+    def _flatten(self, values):
 
-    def scalar(self,shape,other,lenght):
-        if shape == 1:
-            scalar = []
-            for key in range(lenght):
-                scalar.append(other)
+        result = []
 
-            return scalar, lenght
-        else: print("Not defined")
+        for value in values:
+            if isinstance(value, (list, tuple)):
+                result.extend(self._flatten(value))
+            else:
+                result.append(value)
+
+        return result
+
+
+    def is_scalar(self, number):
+
+        return isinstance(number, (int, float)) and not isinstance(number, bool)
 
 
     def __len__(self):
-        return len(self.values) #, len(other.values)
+
+        return len(self.values)
+
 
     def __getitem__(self, key):
 
-        return self.values[key]
-        # homemade function to check the validity of the arrays regarding shape and datatypes
-    def dtypes_uniformity_compatability(self,values,other,shape1,shape2):
+        # vanlig 1D-indeksering
+        if isinstance(key, int):
+            return self.values[key]
 
-        if all(type(key) is type(self.values[0]) for key in other) and all(type(key) is type(other[0]) for key in self.values):
-            #dobbeltsjekker datatyper - plass for plass
-            # Check that the amount of values corresponds to the shape
-            if self.values.__len__() == shape1[0] and len(other) == shape2[0]: # om lengdene er lik shape
-                for key in range(len(self.values)):
-                # Check if the values are not of valid types and returns the values if TypeError not raised
-                    if (isinstance(self.values[key], int) or isinstance(self.values[key],float) or isinstance(self.values[key],bool)
-                        or isinstance(other[key], int) or isinstance(other[key],float) or isinstance(other[key],bool)):
+        # enkel 2D-indeksering: array[row, col]
+        if isinstance(key, tuple) and len(self.shape) == 2 and len(key) == 2:
 
-                        if type(other[key]) == type(self.values[key]): # tester om indeksene er like seg i array
-                            return True
-                        else: return False
+            row, col = key
+            rows, cols = self.shape
 
-                        return True
+            if row < 0:
+                row += rows
 
-                    else: raise TypeError("Not accepted datatypes")
-                #return True
-            else: raise ValueError("Not same lenght") #return False
+            if col < 0:
+                col += cols
 
-            return True
+            if row < 0 or row >= rows or col < 0 or col >= cols:
+                raise IndexError("Array index out of range")
 
-        else: raise TypeError("Different datatypes")
+            return self.values[row * cols + col]
+
+        raise TypeError("Invalid index")
+
+
+    def _nested_values(self):
+
+        # brukes bare for å skrive 2D-array litt penere
+        if len(self.shape) == 1:
+            return self.values
+
+        if len(self.shape) == 2:
+
+            rows, cols = self.shape
+
+            return [
+                self.values[row * cols:(row + 1) * cols]
+                for row in range(rows)
+            ]
+
+        return self.values
+
 
     def __str__(self):
 
-        return f"{self.values}" #return a string of the values
+        return str(self._nested_values())
+
+
+    def __repr__(self):
+
+        return f"Array(shape={self.shape}, values={self._nested_values()})"
+
+
+    def _check_array(self, other):
+
+        if not isinstance(other, Array):
+            raise TypeError("Expected another Array")
+
+        if self.shape != other.shape:
+            raise ValueError("Arrays must have the same shape")
+
+
+    def _check_arithmetic_values(self, values):
+
+        # bool brukes som egen datatype, men ikke i regneoperasjoner
+        for value in values:
+            if isinstance(value, bool):
+                raise TypeError("Datatype bool is not allowed for this operation")
+
 
     def __add__(self, other):
 
-        list = []
+        self._check_arithmetic_values(self.values)
 
-        if not(self.is_scalar(other)): # sjekker at other er et array
+        if isinstance(other, Array):
 
-            if (self.dtypes_uniformity_compatability(self.values, other.values, self.shape,other.shape)): #checks the datatypes, checks if same lenght shape/values.
+            self._check_array(other)
+            self._check_arithmetic_values(other.values)
 
-                for key in range(len(self.values)):
-                        #Makes sure it is not boolean values
-                        if type(self.values[key]) == bool or type(other.values[key]) == bool:
-                            return NotImplemented
-                        else: list.append(self.values[key] + other.values[key])
+            result = []
 
-                return Array(self.shape,list)
-            else: return NotImplemented
+            for key in range(len(self.values)):
+                result.append(self.values[key] + other.values[key])
 
-        else: # om other er en en skalar
+            return Array(self.shape, *result)
 
-            shape_scalar = 1
-            other, lenght = Array.scalar(self,shape_scalar,other,len(self.values)) #omgjør til et array med lengde lik len(self.values) eks skalar 10 = [10,10,10,10]
-            lenght = (lenght,)
-            if (self.dtypes_uniformity_compatability(self.values, other, self.shape, lenght)): #checks the datatypes, checks if same lenght.
+        if self.is_scalar(other):
 
-                for key in range(len(self.values)):
-                    if type(self.values[key]) == bool or type(other[key]) == bool:
-                        return NotImplemented
-                    else:
-                        list.append(self.values[key] + other[key])
+            result = []
 
-                return Array(self.shape,list) #turn the list into an array by instansiating an object of class Array
+            for value in self.values:
+                result.append(value + other)
 
-            else: return NotImplemented
+            return Array(self.shape, *result)
+
+        return NotImplemented
 
 
     def __radd__(self, other):
 
-        list = []
+        return self.__add__(other)
 
-        if not(self.is_scalar(other)): # sjekker at other er et array
-
-            if (self.dtypes_uniformity_compatability(self.values, other.values, self.shape,other.shape)): #checks the datatypes, checks if same lenght shape/values.
-
-                for key in range(len(self.values)):
-                    #Makes sure it is not boolean values
-                    if type(self.values[key]) == bool or type(other.values[key]) == bool:
-                        return NotImplemented
-                    else: list.append(self.values[key] + other.values[key])
-
-                return Array(self.shape,list)
-            else: return NotImplemented
-
-        else: # om other er en en skalar
-
-            shape_scalar = 1
-            other, lenght = Array.scalar(self,shape_scalar,other,len(self.values)) #omgjør til et array med lengde lik len(self.values) eks skalar 10 = [10,10,10,10]
-            lenght = (lenght,)
-            if (self.dtypes_uniformity_compatability(self.values, other, self.shape, lenght)): #checks the datatypes, checks if same lenght.
-
-                for key in range(len(self.values)):
-                    if type(self.values[key]) == bool or type(other[key]) == bool:
-                        return NotImplemented
-                    else:
-                        list.append(self.values[key] + other[key])
-
-                return Array(self.shape,list) #turn the list into an array by instansiating an object of class Array
-
-            else: return NotImplemented
 
     def __sub__(self, other):
 
-        list = []
+        self._check_arithmetic_values(self.values)
 
-        if not(self.is_scalar(other)): # sjekker at other er et array ENDRET HER
+        if isinstance(other, Array):
 
-            if (self.dtypes_uniformity_compatability(self.values, other.values, self.shape, other.shape)): #checks the datatypes, checks if same lenght shape/values.
+            self._check_array(other)
+            self._check_arithmetic_values(other.values)
 
-                for key in range(len(self.values)):
-                        #Makes sure it is not boolean values
-                        if type(self.values[key]) == bool or type(other.values[key]) == bool:
-                            return NotImplemented
-                        else: list.append(self.values[key] - other.values[key])
+            result = []
 
-                return Array(self.shape,list)
-            else: return NotImplemented
+            for key in range(len(self.values)):
+                result.append(self.values[key] - other.values[key])
 
-        else: # om other er en en skalar
+            return Array(self.shape, *result)
 
-            shape_scalar = 1
-            other, lenght = Array.scalar(self,shape_scalar,other,len(self.values)) #omgjør til et array med lengde lik len(self.values) eks skalar 10 = [10,10,10,10]
-            lenght = (lenght,)
+        if self.is_scalar(other):
 
-            if (self.dtypes_uniformity_compatability(self.values, other, self.shape, lenght)): #checks the datatypes, checks if same lenght.
+            result = []
 
-                for key in range(len(self.values)):
-                    if type(self.values[key]) == bool or type(other[key]) == bool:
-                        return NotImplemented
-                    else:
-                        list.append(self.values[key] - other[key])
-                return Array(self.shape,list) #turn the list into an array by instansiating an object of class Array
+            for value in self.values:
+                result.append(value - other)
 
-            else: return NotImplemented
+            return Array(self.shape, *result)
+
+        return NotImplemented
 
 
     def __rsub__(self, other):
 
-        list = []
+        self._check_arithmetic_values(self.values)
 
-        if not(self.is_scalar(other)): # sjekker at other er et array
+        if self.is_scalar(other):
 
-            if (self.dtypes_uniformity_compatability(self.values, other.values, self.shape,other.shape)): #checks the datatypes, checks if same lenght shape/values.
+            result = []
 
-                for key in range(len(self.values)):
-                        #Makes sure it is not boolean values
-                        if type(self.values[key]) == bool or type(other.values[key]) == bool:
-                            return NotImplemented
-                        else: list.append(self.values[key] - other.values[key])
+            for value in self.values:
+                result.append(other - value)
 
-                return Array(self.shape,list)
-            else: return NotImplemented
+            return Array(self.shape, *result)
 
-        else: # om other er en en skalar
-
-            shape_scalar = 1
-            other, lenght = Array.scalar(self,shape_scalar,other,len(self.values)) #omgjør til et array med lengde lik len(self.values) eks skalar 10 = [10,10,10,10]
-            lenght = (lenght,)
-            if (self.dtypes_uniformity_compatability(self.values, other, self.shape, lenght)): #checks the datatypes, checks if same lenght.
-
-                for key in range(len(self.values)):
-                    if type(self.values[key]) == bool or type(other[key]) == bool:
-                        return NotImplemented
-                    else:
-                        #list.append(self.values[key] - other[key])
-                        list.append(other[key] - self.values[key])
-
-                return Array(self.shape,list) #turn the list into an array by instansiating an object of class Array
-
-            else: return NotImplemented
+        return NotImplemented
 
 
     def __mul__(self, other):
 
-        list = []
+        self._check_arithmetic_values(self.values)
 
-        if not(self.is_scalar(other)): # sjekker at other er et array
+        if isinstance(other, Array):
 
-            if (self.dtypes_uniformity_compatability(self.values, other.values, self.shape,other.shape)): #checks the datatypes, checks if same lenght shape/values.
+            self._check_array(other)
+            self._check_arithmetic_values(other.values)
 
-                for key in range(len(self.values)):
-                        #Makes sure it is not boolean values
-                        if type(self.values[key]) == bool or type(other.values[key]) == bool:
-                            return NotImplemented
-                        else: list.append(self.values[key] * other.values[key])
+            result = []
 
-                return Array(self.shape,list)
-            else: return NotImplemented
+            for key in range(len(self.values)):
+                result.append(self.values[key] * other.values[key])
 
-        else: # om other er en en skalar
+            return Array(self.shape, *result)
 
-            shape_scalar = 1
-            other, lenght = Array.scalar(self,shape_scalar,other,len(self.values)) #omgjør til et array med lengde lik len(self.values) eks skalar 10 = [10,10,10,10]
-            lenght = (lenght,)
-            if (self.dtypes_uniformity_compatability(self.values, other, self.shape, lenght)): #checks the datatypes, checks if same lenght.
+        if self.is_scalar(other):
 
-                for key in range(len(self.values)):
-                    if type(self.values[key]) == bool or type(other[key]) == bool:
-                        return NotImplemented
-                    else:
-                        list.append(self.values[key] * other[key])
+            result = []
 
-                return Array(self.shape,list) #turn the list into an array by instansiating an object of class Array
+            for value in self.values:
+                result.append(value * other)
 
-            else: return NotImplemented
+            return Array(self.shape, *result)
+
+        return NotImplemented
 
 
     def __rmul__(self, other):
 
-        list = []
-
-        if not(self.is_scalar(other)): # sjekker at other er et array
-
-            if (self.dtypes_uniformity_compatability(self.values, other.values, self.shape,other.shape)): #checks the datatypes, checks if same lenght shape/values.
-
-                for key in range(len(self.values)):
-                        #Makes sure it is not boolean values
-                        if type(self.values[key]) == bool or type(other.values[key]) == bool:
-                            return NotImplemented
-                        else: list.append(self.values[key] * other.values[key])
-
-                return Array(self.shape,list)
-            else: return NotImplemented
-
-        else: # om other er en en skalar
-
-            shape_scalar = 1
-            other, lenght = Array.scalar(self,shape_scalar,other,len(self.values)) #omgjør til et array med lengde lik len(self.values) eks skalar 10 = [10,10,10,10]
-            lenght = (lenght,)
-            if (self.dtypes_uniformity_compatability(self.values, other, self.shape, lenght)): #checks the datatypes, checks if same lenght.
-
-                for key in range(len(self.values)):
-                    if type(self.values[key]) == bool or type(other[key]) == bool:
-                        return NotImplemented
-                    else:
-                        list.append(self.values[key] * other[key])
-
-                return Array(self.shape,list) #turn the list into an array by instansiating an object of class Array
-
-            else: return NotImplemented
+        return self.__mul__(other)
 
 
-    def __eq__(self, other): #skal brukes til å kalle når man tester om 2 array er like A == B True
+    def __eq__(self, other):
 
-        #Sjekker at arrays har samme shape
-        if self.shape == other.shape:
-
-        # Kryssjekker arrayene - om første plass i self.values ikke matcher datatype i other og omvendt
-            if all(type(key) is type(self.values[0]) for key in other) and all(type(key) is type(other[0]) for key in self.values):
-
-                #dobbeltsjekker datatyper - plass for plass
-                for key in range(len(self.values)):
-                    if type(other[key]) == type(self.values[key]):
-                        return True
-                    else: return False
-            else: return False
-
-        # Returnerer False og test feiler:
-        else:
-            print("Feil datatype")
+        # samme shape og samme verdier
+        if not isinstance(other, Array):
             return False
 
-    def is_equal(self, other): #oppretter en liste som returnerer boolske verdier for innholdet mellom arrayene
+        return self.shape == other.shape and self.values == other.values
 
-        list = []
 
-        # sjekker om de er like
-        if (self.shape == other.shape):
+    def is_equal(self, other):
 
-            for key in range(len(self.values)):
-                #Sjekker om indexene er like og legger til True/False alt ettersom
-                if type(other[key]) != type(self.values[key]):
-                    list.append(False)
-                else: list.append(True)
-            A = Array(self.shape,list) #instansierer et nytt objekt av klassen Array, som gir tilbake bare True om arrayene som testes er kompatible
-        else:
-            raise ValueError
+        # hjemmelaget variant av elementvis equality
+        self._check_array(other)
 
-        return A
+        result = []
+
+        for key in range(len(self.values)):
+            result.append(self.values[key] == other.values[key])
+
+        return Array(self.shape, *result)
 
 
     def min_element(self):
 
-        min = self.values[0]
+        self._check_arithmetic_values(self.values)
 
-        for key in range(len(self.values)):
-            if type(self.values[key]) == bool:
-                raise TypeError("Datatype Bool is not allowed for this operation")
-            if self.values[key] < min:
-                min = self.values[key]
+        minimum = self.values[0]
 
-        return min
+        for value in self.values:
+            if value < minimum:
+                minimum = value
+
+        return minimum
+
 
     def mean_element(self):
-        sum = 0
-        for key in range(len(self.values)):
-            if type(self.values[key]) == bool:
-                raise TypeError("Datatype Bool is not allowed for this operation")
-            sum += self.values[key]
-        mean = float(sum/len(self.values))
 
-        return mean
+        self._check_arithmetic_values(self.values)
+
+        total = 0
+
+        for value in self.values:
+            total += value
+
+        return float(total / len(self.values))
